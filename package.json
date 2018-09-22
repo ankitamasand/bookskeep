@@ -1,11 +1,10 @@
 {
-  "name": "indexeddb",
+  "name": "bookskeep",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --mode development",
+    "start": "webpack-dev-server --output-public-path=/dist/",
     "build": "webpack --mode production"
   },
   "author": "",
@@ -15,15 +14,21 @@
     "react-dom": "^16.4.2"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-2": "^6.24.1",
     "babel-preset-env": "^1.6.0",
-    "babel-preset-react": "^6.24.1",
-    "html-webpack-plugin": "^3.2.0",
-    "node-sass": "^4.9.3",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.0",
-    "webpack": "^4.17.1",
-    "webpack-cli": "^3.1.0"
+    "html-webpack-plugin": "^2.30.1",
+    "extract-text-webpack-plugin": "^3.0.1",
+    "css-loader": "^0.28.0",
+    "node-sass": "^4.5.2",
+    "postcss-loader": "^2.0.5",
+    "sass-loader": "^6.0.6",
+    "script-loader": "^0.7.2",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.2"
   }
 }
