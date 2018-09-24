@@ -4,3 +4,24 @@
 body {
     margin-bottom: 50px;
 }
+.trigger {
+    cursor: pointer;
+    &:after {
+        content: '\2807';
+    }
+}
+.custom-list-group {
+    margin-bottom: 0px;
+}
+.custom-list-group-item {
+    border: 0px;
+}
+.popover {
+    .popover-content {
+        padding: 0px;
+    }
+}
+
+.table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+    padding: 10px;
+}

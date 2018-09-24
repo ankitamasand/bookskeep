@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { IndexedDbWrapper } from '../utils/indexeddb'
 import { Button } from 'react-bootstrap'
-import BookForm from './form'
+import BookForm from './base/form'
 
 class BookData extends Component {
 

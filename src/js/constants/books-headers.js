@@ -16,5 +16,9 @@ export const BooksHeaders = [
     {
         displayName: 'Summary',
         apiKey: 'summary'
+    },
+    {
+        displayName: 'Actions',
+        apiKey: 'actions'
     }
 ]

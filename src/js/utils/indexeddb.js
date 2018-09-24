@@ -1,9 +1,10 @@
+import { DB, OBJECTSTORE, ADWRITE, READONLY, READWRITE } from '../constants/indexeddb'
 let idb = null
 let dbInstance = null
 
 const initialize = (callback) => {
     idb = window.indexedDB
-    let request = idb.open('BooksKeep', 1)
+    let request = idb.open(DB, 1)
 
     request.onsuccess = (event) => {
         dbInstance = event.target.result
@@ -20,7 +21,7 @@ const initialize = (callback) => {
             dbInstance = event.target.result
         }
 
-        dbInstance.createObjectStore('books', { keyPath: 'name' })
+        dbInstance.createObjectStore(OBJECTSTORE, { keyPath: 'id' })
     }
 }
 
@@ -30,7 +31,10 @@ const getStore = (db, mode) => {
 }
 
 const update = (data, callback) => {
-    let store = getStore('books', 'readwrite')
+    let store = getStore(OBJECTSTORE, READWRITE)
+    if (!data.id) {
+        data.id = new Date().getTime()
+    }
     let updateRequest = store.put(data)
     updateRequest.onsuccess = (event) => {
         typeof callback === 'function' && callback()
@@ -38,15 +42,33 @@ const update = (data, callback) => {
 }
 
 const getAll = (callback) => {
-    let store = getStore('books', 'readonly')
+    let store = getStore(OBJECTSTORE, READONLY)
     let getAllRequest = store.getAll()
     getAllRequest.onsuccess = (event) => {
         callback(event.target.result)
     }
 }
 
+const getItem = (id, callback) => {
+    let store = getStore(OBJECTSTORE, READONLY)
+    let getItemRequest = store.get(id)
+    getItemRequest.onsuccess = (event) => {
+        callback(event.target.result)
+    }
+}
+
+const deleteItem = (id, callback) => {
+    let store = getStore(OBJECTSTORE, READWRITE)
+    let deleteItemRequest = store.delete(id)
+    deleteItemRequest.onsuccess = (event) => {
+        callback()
+    }
+}
+
 export const IndexedDbWrapper = {
     initialize,
     update,
-    getAll
+    getAll,
+    getItem,
+    deleteItem
 }

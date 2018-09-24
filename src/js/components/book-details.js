@@ -2,14 +2,25 @@ import React, { Component } from 'react'
 import { Table } from 'react-bootstrap'
 import { IndexedDbWrapper } from '../utils/indexeddb'
 import { BooksHeaders } from '../constants/books-headers'
+import { ActionsMenu } from './base/popover'
+import CustomModal from './base/modal'
 
 class BookDetails extends Component {
 
     constructor (props) {
         super (props)
         this.state = {
-            booksData: []
+            booksData: [],
+            showModal: false,
+            selectedBook: {}
         }
+    }
+
+    onEdit = (e, id) => {
+        e.preventDefault()
+        let bookDetails = IndexedDbWrapper.getItem(id, (selectedBook) => {
+            this.setState({ showModal: true, selectedBook })
+        })
     }
 
     getTableMarkup = () => {
@@ -41,6 +52,8 @@ class BookDetails extends Component {
                             let value = book[header.apiKey]
                             if (header.apiKey === '#') {
                                 value = index+1
+                            } else if (header.apiKey === 'actions') {
+                                value = this.getActionsMarkup(book.id)
                             }
                             return <td key={header.apiKey}>{value}</td>
                         })
@@ -50,10 +63,73 @@ class BookDetails extends Component {
         })
     }
 
-    render () {
+    getActionsMarkup = (id) => {
+        const actions = [
+            {
+                text: 'Edit',
+                onClick: this.onEdit
+            },
+            {
+                text: 'Delete',
+                onClick: this.onDelete
+            }
+        ]
+        return (
+            <ActionsMenu
+                align='left'
+                trigger='click'
+                actions={actions}
+                id={id}
+            />
+        )
+    }
+
+    onSave = (data) => {
+        IndexedDbWrapper.update(data, () => {
+            this.syncStateWithIdb(data.id, 'update', data)
+            this.onClose()
+        })
+    }
+
+    onDelete = (e, id) => {
+        e.preventDefault()
+        IndexedDbWrapper.deleteItem(id, () => {
+            this.syncStateWithIdb(id, 'delete')
+            this.onClose()
+        })
+    }
+
+    syncStateWithIdb = (id, mode, data) => {
         let { booksData } = this.state
+        let updatedBooksData = [ ...booksData ]
+        let selectedBookIndex = updatedBooksData.findIndex(book => book.id === id)
+
+        if (selectedBookIndex > -1) {
+            if (mode === 'update') {
+                updatedBooksData[selectedBookIndex] = data
+            } else if (mode === 'delete') {
+                updatedBooksData.splice(selectedBookIndex, 1)
+            }
+
+            this.setState({ booksData: updatedBooksData })
+        }
+    }
+
+    onClose = () => {
+        this.setState({ showModal: false })
+    }
+
+    render () {
+        let { booksData, showModal, selectedBook } = this.state
         return (
             <div>
+                <CustomModal
+                    showModal={showModal}
+                    onClose={this.onClose}
+                    onSave={this.onSave}
+                    selectedBook={selectedBook}
+
+                />
                 <h4>Your Books &hearts;</h4>
                 {this.getTableMarkup()}
             </div>
