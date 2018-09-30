@@ -8,28 +8,47 @@ class Body extends Component {
     constructor (props) {
         super(props)
         this.state = {
-            dbInitialized: false
+            booksData: []
         }
     }
 
     render () {
-        let { dbInitialized } = this.state
+        let { booksData } = this.state
         return (
             <Fragment>
                 <BookDetails
-                    dbInitialized={dbInitialized}
+                    booksData={booksData}
+                    updateBooksData={this.updateBooksData}
                 />
                 <BookData
-                    dbInitialized={dbInitialized}
+                    updateBooksData={this.updateBooksData}
                 />
             </Fragment>
         )
     }
 
     initializeDB = () => {
-        this.setState({
-            dbInitialized: true
+        IndexedDbWrapper.getAll((booksData) => {
+            this.setState({ booksData })
         })
+    }
+
+    updateBooksData = (data, mode) => {
+        let { booksData } = this.state
+        let newBooksData = [ ...booksData ]
+        let selectedBookIndex = newBooksData.findIndex( book => book.id === data.id)
+
+        if (selectedBookIndex > -1) {
+            if (mode === 'update') {
+                newBooksData[selectedBookIndex] = data
+            } else if (mode === 'delete') {
+                newBooksData.splice(selectedBookIndex, 1)
+            }
+        } else {
+            newBooksData.push(data)
+        }
+
+        this.setState({ booksData: newBooksData })
     }
 
     componentDidMount () {

@@ -37,7 +37,7 @@ const update = (data, callback) => {
     }
     let updateRequest = store.put(data)
     updateRequest.onsuccess = (event) => {
-        typeof callback === 'function' && callback()
+        typeof callback === 'function' && callback(data)
     }
 }
 

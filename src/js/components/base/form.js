@@ -23,6 +23,11 @@ class BookForm extends Component {
         let { formData } = this.state
         let { onSubmit } = this.props
         onSubmit(formData)
+        this.clearForm()
+    }
+
+    clearForm = () => {
+        this.setState({ formData: {} })
     }
 
     render () {

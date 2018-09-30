@@ -10,7 +10,6 @@ class BookDetails extends Component {
     constructor (props) {
         super (props)
         this.state = {
-            booksData: [],
             showModal: false,
             selectedBook: {}
         }
@@ -43,7 +42,7 @@ class BookDetails extends Component {
     }
 
     getTableData = () => {
-        let { booksData } = this.state
+        let { booksData } = this.props
         return booksData.map ((book, index) => {
             return (
                 <tr key={book.name}>
@@ -84,9 +83,10 @@ class BookDetails extends Component {
         )
     }
 
-    onSave = (data) => {
-        IndexedDbWrapper.update(data, () => {
-            this.syncStateWithIdb(data.id, 'update', data)
+    onSave = (formData) => {
+        let { updateBooksData } = this.props
+        IndexedDbWrapper.update(formData, (data) => {
+            updateBooksData(data, 'update')
             this.onClose()
         })
     }
@@ -94,25 +94,9 @@ class BookDetails extends Component {
     onDelete = (e, id) => {
         e.preventDefault()
         IndexedDbWrapper.deleteItem(id, () => {
-            this.syncStateWithIdb(id, 'delete')
+            updateBooksData({ id }, 'delete')
             this.onClose()
         })
-    }
-
-    syncStateWithIdb = (id, mode, data) => {
-        let { booksData } = this.state
-        let updatedBooksData = [ ...booksData ]
-        let selectedBookIndex = updatedBooksData.findIndex(book => book.id === id)
-
-        if (selectedBookIndex > -1) {
-            if (mode === 'update') {
-                updatedBooksData[selectedBookIndex] = data
-            } else if (mode === 'delete') {
-                updatedBooksData.splice(selectedBookIndex, 1)
-            }
-
-            this.setState({ booksData: updatedBooksData })
-        }
     }
 
     onClose = () => {
@@ -120,7 +104,7 @@ class BookDetails extends Component {
     }
 
     render () {
-        let { booksData, showModal, selectedBook } = this.state
+        let { showModal, selectedBook } = this.state
         return (
             <div>
                 <CustomModal
@@ -134,17 +118,6 @@ class BookDetails extends Component {
                 {this.getTableMarkup()}
             </div>
         )
-    }
-
-    componentWillReceiveProps (nextProps) {
-        let { dbInitialized: prevDBInitialized } = this.props
-        let { dbInitialized: nextDBInitialized } = nextProps
-
-        if (!prevDBInitialized && nextDBInitialized) {
-            IndexedDbWrapper.getAll((booksData) => {
-                this.setState({ booksData })
-            })
-        }
     }
 }
 

@@ -6,7 +6,8 @@ import BookForm from './base/form'
 class BookData extends Component {
 
     onSubmit = (formData) => {
-        IndexedDbWrapper.update(formData, () => console.log('Item Updated'))
+        let { updateBooksData } = this.props
+        IndexedDbWrapper.update(formData, (data) => updateBooksData(data, 'update'))
     }
 
     render () {
