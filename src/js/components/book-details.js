@@ -37,7 +37,7 @@ class BookDetails extends Component {
 
     getTableHeaders = () => {
         return BooksHeaders.map ((header, index) => {
-            return <th key={header.apiKey}>{header.displayName}</th>
+            return <th width={header.width} key={header.apiKey}>{header.displayName}</th>
         })
     }
 
@@ -54,7 +54,7 @@ class BookDetails extends Component {
                             } else if (header.apiKey === 'actions') {
                                 value = this.getActionsMarkup(book.id)
                             }
-                            return <td key={header.apiKey}>{value}</td>
+                            return <td width={header.width} key={header.apiKey}>{value}</td>
                         })
                     }
                 </tr>
