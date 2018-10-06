@@ -2,6 +2,7 @@ let path                = require('path')
 let webpack             = require('webpack')
 const HTMLWebpackPlugin = require("html-webpack-plugin")
 const ExtractTextPlugin   = require('extract-text-webpack-plugin')
+const { InjectManifest } = require('workbox-webpack-plugin')
 
 let publicPath = process.env.PUBLIC_PATH || '/'
 let dist = process.env.DIST_DIRECTORY || 'dist'
@@ -55,6 +56,11 @@ module.exports = {
             template: "./src/index.html",
             filename: "./index.html"
         }),
-        new ExtractTextPlugin({ filename: 'css/main.css' })
+        new ExtractTextPlugin({
+            filename: 'css/main.css'
+        }),
+        new InjectManifest({
+            swSrc: './src/service-worker.js'
+        })
     ]
 }
