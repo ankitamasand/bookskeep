@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Button } from 'react-bootstrap'
 import BookForm from './form'
 
-class CustomModal extends Component {
+class DetailsModal extends Component {
 
     getFormMarkup = () => {
         let { onClose, onSave, selectedBook } = this.props
@@ -34,4 +34,4 @@ class CustomModal extends Component {
     }
 }
 
-export default CustomModal
+export default DetailsModal

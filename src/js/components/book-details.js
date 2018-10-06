@@ -3,14 +3,16 @@ import { Table } from 'react-bootstrap'
 import { IndexedDbWrapper } from '../utils/indexeddb'
 import { BooksHeaders } from '../constants/books-headers'
 import { ActionsMenu } from './base/popover'
-import CustomModal from './base/modal'
+import DetailsModal from './base/modal'
+import QuotesModal from './base/quotes-modal'
 
 class BookDetails extends Component {
 
     constructor (props) {
         super (props)
         this.state = {
-            showModal: false,
+            showDetailsModal: false,
+            showQuotesModal: false,
             selectedBook: {}
         }
     }
@@ -18,7 +20,7 @@ class BookDetails extends Component {
     onEdit = (e, id) => {
         e.preventDefault()
         let bookDetails = IndexedDbWrapper.getItem(id, (selectedBook) => {
-            this.setState({ showModal: true, selectedBook })
+            this.setState({ showDetailsModal: true, selectedBook })
         })
     }
 
@@ -71,6 +73,10 @@ class BookDetails extends Component {
             {
                 text: 'Delete',
                 onClick: this.onDelete
+            },
+            {
+                text: 'View Quotes',
+                onClick: this.viewQuotes
             }
         ]
         return (
@@ -100,19 +106,31 @@ class BookDetails extends Component {
     }
 
     onClose = () => {
-        this.setState({ showModal: false })
+        this.setState({ showDetailsModal: false, showQuotesModal: false })
+    }
+
+    viewQuotes = (e, id) => {
+        e.preventDefault()
+        IndexedDbWrapper.getItem(id, (selectedBook) => {
+            this.setState({ showQuotesModal: true, selectedBook })
+        })
     }
 
     render () {
-        let { showModal, selectedBook } = this.state
+        let { showDetailsModal, selectedBook, showQuotesModal } = this.state
         return (
             <div>
-                <CustomModal
-                    showModal={showModal}
+                <DetailsModal
+                    showModal={showDetailsModal}
                     onClose={this.onClose}
                     onSave={this.onSave}
                     selectedBook={selectedBook}
-
+                />
+                <QuotesModal
+                    showModal={showQuotesModal}
+                    onClose={this.onClose}
+                    onSave={this.onSave}
+                    selectedBook={selectedBook}
                 />
                 <h4>Your Books &hearts;</h4>
                 {this.getTableMarkup()}
