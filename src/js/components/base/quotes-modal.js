@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { Modal, Button, ListGroup, ListGroupItem, Glyphicon } from 'react-bootstrap'
 import { FieldGroup } from '../../utils/field-group'
 
@@ -14,42 +14,53 @@ class QuotesModal extends Component {
         let { editing, quotes } = this.state
 
         return (
-            <ListGroup>
-                {
-                    quotes.map ((quote, index) => {
-                        if (editing === index) {
+            <Fragment>
+                <ListGroup>
+                    {
+                        quotes.map ((quote, index) => {
+                            if (editing === index) {
+                                return (
+                                    <ListGroupItem key={index}>
+                                        <FieldGroup
+                                            id='name'
+                                            type='text'
+                                            label='Editing...'
+                                            value={quote || ''}
+                                            onChange={ (e) => this.saveQuote(e, index) }
+                                        />
+                                        <span className='glyph'>
+                                            <Glyphicon glyph='glyphicon glyphicon-ok-sign' onClick={(e) => this.editDone(e, index)} />
+                                        </span>
+                                    </ListGroupItem>
+                                )
+                            }
                             return (
                                 <ListGroupItem key={index}>
-                                    <FieldGroup
-                                        id='name'
-                                        type='text'
-                                        label='Editing...'
-                                        value={quote || ''}
-                                        onChange={ (e) => this.saveQuote(e, index) }
-                                    />
-                                    <span className='glyph'>
-                                        <Glyphicon glyph='glyphicon glyphicon-ok-sign' onClick={(e) => this.editDone(e, index)} />
+                                    <span className='quote-text'>{quote}</span>
+                                    <span className='quote-actions'>
+                                        <span className='glyph'>
+                                            <Glyphicon glyph='glyphicon glyphicon-pencil' onClick={() => this.editQuote(index)}/>
+                                        </span>
+                                        <span className='glyph'>
+                                            <Glyphicon glyph='glyphicon glyphicon-trash' onClick={() => this.deleteQuote(index)}/>
+                                        </span>
                                     </span>
                                 </ListGroupItem>
                             )
-                        }
-                        return (
-                            <ListGroupItem key={index}>
-                                <span className='quote-text'>{quote}</span>
-                                <span className='quote-actions'>
-                                    <span className='glyph'>
-                                        <Glyphicon glyph='glyphicon glyphicon-pencil' onClick={() => this.editQuote(index)}/>
-                                    </span>
-                                    <span className='glyph'>
-                                        <Glyphicon glyph='glyphicon glyphicon-trash' onClick={() => this.deleteQuote(index)}/>
-                                    </span>
-                                </span>
-                            </ListGroupItem>
-                        )
-                    })
-                }
-            </ListGroup>
+                        })
+                    }
+                </ListGroup>
+                <Button onClick={this.addQuote}>Add Quote</Button>
+            </Fragment>
+
         )
+    }
+
+    addQuote = () => {
+        let { quotes } = this.state
+        let newQuotes = [ ...quotes ]
+        newQuotes.push('')
+        this.setState({ quotes: newQuotes, editing: newQuotes.length - 1 })
     }
 
     editQuote = (index) => {
