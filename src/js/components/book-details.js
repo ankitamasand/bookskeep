@@ -99,6 +99,7 @@ class BookDetails extends Component {
 
     onDelete = (e, id) => {
         e.preventDefault()
+        let { updateBooksData } = this.props
         IndexedDbWrapper.deleteItem(id, () => {
             updateBooksData({ id }, 'delete')
             this.onClose()
