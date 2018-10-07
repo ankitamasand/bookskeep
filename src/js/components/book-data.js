@@ -7,7 +7,7 @@ class BookData extends Component {
 
     onSubmit = (formData) => {
         let { updateBooksData } = this.props
-        IndexedDbWrapper.update(formData, (data) => updateBooksData(data, 'update'))
+        IndexedDbWrapper.update('books', formData, (data) => updateBooksData(data, 'update'))
     }
 
     render () {

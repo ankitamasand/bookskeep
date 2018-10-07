@@ -1,4 +1,4 @@
-export const registerSw = () => {
+export const registerSw = (userId) => {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./service-worker.js')
             .then ( () => {
@@ -6,30 +6,43 @@ export const registerSw = () => {
                 console.log('Service Worker registered')
             })
             .then ((serviceWorkerRegistration) => {
-                getSubscription(serviceWorkerRegistration)
-                console.log('serviceWorkerRegistration', serviceWorkerRegistration)
-                Notification.requestPermission((p) => {
-                    console.log('p', p)
-                })
+                getSubscription(serviceWorkerRegistration, userId)
+                Notification.requestPermission()
             })
     }
 }
 
-const getSubscription = (serviceWorkerRegistration) => {
+const getSubscription = (serviceWorkerRegistration, userId) => {
     serviceWorkerRegistration.pushManager.getSubscription()
         .then ((subscription) => {
-            console.log('subscription', JSON.stringify(subscription))
-
             if (!subscription) {
                 const applicationServerKey = urlB64ToUint8Array('BPZIQVuuwYUOSvrLyqw9wVuheVR3zbkV5V3XZNbvhUFc5kLq89IKU3c2u4e0ItziU-A2qcTZy2F5GWFdMeKwrIY')
                 serviceWorkerRegistration.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey
                 }).then (subscription => {
-                    console.log('subscription', JSON.stringify(subscription))
+                    saveSubscription(subscription, userId)
                 })
+            } else {
+                saveSubscription(subscription, userId)
             }
         })
+}
+
+const saveSubscription = (subscription, userId) => {
+    let data = {
+        subscription,
+        id: userId
+    }
+    fetch ('http://localhost:3000/subscribe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then (data => {
+        console.log('subscription for userId saved successfully', userId)
+    })
 }
 
 const urlB64ToUint8Array = (base64String) => {

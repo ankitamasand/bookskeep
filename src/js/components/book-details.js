@@ -19,7 +19,7 @@ class BookDetails extends Component {
 
     onEdit = (e, id) => {
         e.preventDefault()
-        let bookDetails = IndexedDbWrapper.getItem(id, (selectedBook) => {
+        let bookDetails = IndexedDbWrapper.getItem('books', id, (selectedBook) => {
             this.setState({ showDetailsModal: true, selectedBook })
         })
     }
@@ -91,7 +91,7 @@ class BookDetails extends Component {
 
     onSave = (formData) => {
         let { updateBooksData } = this.props
-        IndexedDbWrapper.update(formData, (data) => {
+        IndexedDbWrapper.update('books', formData, (data) => {
             updateBooksData(data, 'update')
             this.onClose()
         })
@@ -100,7 +100,7 @@ class BookDetails extends Component {
     onDelete = (e, id) => {
         e.preventDefault()
         let { updateBooksData } = this.props
-        IndexedDbWrapper.deleteItem(id, () => {
+        IndexedDbWrapper.deleteItem('books', id, () => {
             updateBooksData({ id }, 'delete')
             this.onClose()
         })
@@ -112,7 +112,7 @@ class BookDetails extends Component {
 
     viewQuotes = (e, id) => {
         e.preventDefault()
-        IndexedDbWrapper.getItem(id, (selectedBook) => {
+        IndexedDbWrapper.getItem('books', id, (selectedBook) => {
             this.setState({ showQuotesModal: true, selectedBook })
         })
     }

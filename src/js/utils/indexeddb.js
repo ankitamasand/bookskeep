@@ -1,4 +1,4 @@
-import { DB, OBJECTSTORE, ADWRITE, READONLY, READWRITE } from '../constants/indexeddb'
+import { DB, OBJECTSTORE, USERSTORE, READONLY, READWRITE } from '../constants/indexeddb'
 let idb = null
 let dbInstance = null
 
@@ -9,7 +9,6 @@ const initialize = (callback) => {
     request.onsuccess = (event) => {
         dbInstance = event.target.result
         callback()
-        console.log('BooksKeep database created')
     }
 
     request.onerror = (event) => {
@@ -22,16 +21,17 @@ const initialize = (callback) => {
         }
 
         dbInstance.createObjectStore(OBJECTSTORE, { keyPath: 'id' })
+        dbInstance.createObjectStore(USERSTORE, { keyPath: 'id' })
     }
 }
 
-const getStore = (db, mode) => {
-    let transaction = dbInstance.transaction(db, mode)
-    return transaction.objectStore(db)
+const getStore = (type, mode) => {
+    let transaction = dbInstance.transaction(type, mode)
+    return transaction.objectStore(type)
 }
 
-const update = (data, callback) => {
-    let store = getStore(OBJECTSTORE, READWRITE)
+const update = (type, data, callback) => {
+    let store = getStore(type, READWRITE)
     if (!data.id) {
         data.id = new Date().getTime()
     }
@@ -41,24 +41,24 @@ const update = (data, callback) => {
     }
 }
 
-const getAll = (callback) => {
-    let store = getStore(OBJECTSTORE, READONLY)
+const getAll = (type, callback) => {
+    let store = getStore(type, READONLY)
     let getAllRequest = store.getAll()
     getAllRequest.onsuccess = (event) => {
         callback(event.target.result)
     }
 }
 
-const getItem = (id, callback) => {
-    let store = getStore(OBJECTSTORE, READONLY)
+const getItem = (type, id, callback) => {
+    let store = getStore(type, READONLY)
     let getItemRequest = store.get(id)
     getItemRequest.onsuccess = (event) => {
         callback(event.target.result)
     }
 }
 
-const deleteItem = (id, callback) => {
-    let store = getStore(OBJECTSTORE, READWRITE)
+const deleteItem = (type, id, callback) => {
+    let store = getStore(type, READWRITE)
     let deleteItemRequest = store.delete(id)
     deleteItemRequest.onsuccess = (event) => {
         callback()

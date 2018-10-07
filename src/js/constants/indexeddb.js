@@ -1,4 +1,5 @@
 export const DB = 'BooksKeep'
 export const OBJECTSTORE = 'books'
+export const USERSTORE = 'user'
 export const READWRITE = 'readwrite'
 export const READONLY = 'readonly'

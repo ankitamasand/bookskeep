@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { IndexedDbWrapper } from '../utils/indexeddb'
 import BookData from './book-data'
 import BookDetails from './book-details'
+import { register } from '../utils/register-user'
 
 class Body extends Component {
 
@@ -28,7 +29,8 @@ class Body extends Component {
     }
 
     initializeDB = () => {
-        IndexedDbWrapper.getAll((booksData) => {
+        register()
+        IndexedDbWrapper.getAll('books', (booksData) => {
             this.setState({ booksData })
         })
     }
